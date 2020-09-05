@@ -1,9 +1,9 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Screencast: 
+## Screencast
 https://drive.google.com/file/d/1bKl-c82PPE2RQN5xF5OaewAxBX-81qMA/view?usp=sharing
 
-## How to run this project:
+## How to run this project
 1. Clone project or download zip
 2. You need node.js and npm install
 3. Open project with editor (for instance VSC)

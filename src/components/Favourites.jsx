@@ -15,13 +15,13 @@ const useStyles = makeStyles({
   },
 });
 
-const Favourites = ({ favouriteContacts }) => {
+function Favourites({ favouriteContacts }) {
   const classes = useStyles();
     
   return (
     <div className="favourites">
       <h3 className="favourites__header">Favourites</h3>
-      {favouriteContacts.length?
+      {favouriteContacts.length > 0 ?
         <TableContainer component={Paper}>
           <Table className={classes.table} aria-label="simple table">
             <TableHead>

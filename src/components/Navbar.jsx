@@ -3,7 +3,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { auth } from '../firebase/firebaseConfig';
 import { connect } from 'react-redux';
 
-const Navbar = ({ currentUser }) => {
+function Navbar({ currentUser }) {
   const history = useHistory();
 
   const handleSignOut = () => {
@@ -19,7 +19,13 @@ const Navbar = ({ currentUser }) => {
             <Link to='/' className="nav-bar__nav-link">Contacts</Link>
             <Link to='/favourites' className="nav-bar__nav-link">Favourites</Link>
           </div>
-          <div color="inherit" className="nav-bar__signout-btn" onClick={handleSignOut}>Sign out</div>
+          <div
+            color="inherit"
+            className="nav-bar__signout-btn"
+            onClick={handleSignOut}
+          >
+            Sign out
+          </div>
         </div>
       ) : (
         <Link to='/login' className="nav-bar__login-btn">Login</Link>

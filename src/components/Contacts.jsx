@@ -22,16 +22,18 @@ const useStyles = makeStyles({
   },
 });
 
-const Contacts = ({ currentUser, userContacts, showContactModal }) => {
+function Contacts({ currentUser, userContacts, showContactModal }) {
   const classes = useStyles();
 
   const deleteContact = (id) => {
     if (id) {
-      db.collection('contacts').doc(id).delete().then(function () {
-        console.log("Document successfully deleted!");
-      }).catch(function (error) {
-        console.error(`Error removing document: ${error}`);
-      }); 
+      db.collection('contacts').doc(id).delete()
+        .then(function () {
+          console.log('Document successfully deleted!');
+        })
+        .catch(function (error) {
+          console.error(`Error removing document: ${error}`);
+        }); 
     }
   };
 
@@ -45,22 +47,27 @@ const Contacts = ({ currentUser, userContacts, showContactModal }) => {
 
   const setFavourite = (id) => {
     if (id) {
-      db.collection('contacts').doc(id).update({"isFavourite": true}) 
+      db.collection('contacts').doc(id).update({'isFavourite': true}) 
     }
   }
 
   const unsetFavourite = (id) => {
     if (id) {
-      db.collection('contacts').doc(id).update({"isFavourite": false}) 
+      db.collection('contacts').doc(id).update({'isFavourite': false}) 
     }
   }
     
   return (
     <div className="contacts">
       <h3 className="contacts__header">Contacts</h3>
-      <button className="contacts__add-contact" onClick={()=>addContact()}><AddIcon /></button>
+      <button
+        className="contacts__add-contact"
+        onClick={() => addContact()}
+      >
+        <AddIcon />
+      </button>
       
-      {userContacts.length?
+      {userContacts.length > 0 ?
         <TableContainer component={Paper} width="70%">
           <Table className={classes.table} aria-label="simple table">
             <TableHead>
@@ -77,17 +84,35 @@ const Contacts = ({ currentUser, userContacts, showContactModal }) => {
                 <TableRow key={currentcontact.id}>
                   <TableCell>
                     {currentcontact.isFavourite ?
-                      <button className="contacts__unset-favourite" onClick={()=>unsetFavourite(currentcontact.id)}><StartFilledIcon /></button>
+                      <button
+                        className="contacts__unset-favourite"
+                        onClick={() => unsetFavourite(currentcontact.id)}>
+                        <StartFilledIcon />
+                      </button>
                       :
-                      <button className="contacts__set-favourite" onClick={()=>setFavourite(currentcontact.id)}><StartBorderedIcon /></button>
+                      <button
+                        className="contacts__set-favourite"
+                        onClick={() => setFavourite(currentcontact.id)}>
+                        <StartBorderedIcon />
+                      </button>
                     }
                   </TableCell>
                   <TableCell component="th" scope="row" align="right">{currentcontact.name}</TableCell>
                   <TableCell align="right">{currentcontact.phone}</TableCell>
                   <TableCell align="right">{currentcontact.email}</TableCell>
                   <TableCell align="right">
-                    <button className="contacts__delete-contact" onClick={()=>deleteContact(currentcontact.id)}><DeleteIcon /></button>
-                    <button className="contacts__edit-contact" onClick={()=>editContact(currentcontact)}><EditIcon /></button>
+                    <button
+                      className="contacts__delete-contact"
+                      onClick={() => deleteContact(currentcontact.id)}
+                    >
+                      <DeleteIcon />
+                    </button>
+                    <button
+                      className="contacts__edit-contact"
+                      onClick={() => editContact(currentcontact)}
+                    >
+                      <EditIcon />
+                    </button>
                   </TableCell>
                 </TableRow>
               ))}

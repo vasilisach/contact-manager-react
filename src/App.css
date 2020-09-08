@@ -1,8 +1,8 @@
-.nav-bar{
+.nav-bar {
   background-color: #3e5f73;
   height: 50px;
 }
-.nav-bar__nav-content{
+.nav-bar__nav-content {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -10,26 +10,27 @@
   font-size: 20px;
   color: white;
 }
-.nav-bar__nav-left{
+.nav-bar__nav-left {
   display: flex;
   align-items: center;
 }
-.nav-bar__nav-link{
+.nav-bar__nav-link {
   margin: 0 10px;
   color: white;
   text-decoration: none;
 }
-.nav-bar__signout-btn, .nav-bar__login-btn{
+.nav-bar__signout-btn, 
+.nav-bar__login-btn {
   cursor: pointer;
 }
-.nav-bar__login-btn{
+.nav-bar__login-btn {
   margin: 10px;
   float: right;
   font-size: 20px;
   color: white;
   text-decoration: none;
 }
-.contact-modal{
+.contact-modal {
   position: fixed;
   top: 30px;
   left: 20px;
@@ -40,7 +41,7 @@
   box-shadow: 0 0 5px black;
   padding: 10px;
 }
-.contact-modal__close-modal{
+.contact-modal__close-modal {
   position: absolute;
   right: -20px;
   top: -20px;
@@ -52,9 +53,9 @@
   cursor: pointer;
   padding: 7px;
 }
-.contacts__add-contact{
+.contacts__add-contact {
   background-color: burlywood;
-  border: none;
+  border: 0;
   border-radius: 50%;
   position: absolute;
   top:60px;
@@ -63,13 +64,17 @@
   height: 50px;
   outline: none;
 }
-.contacts__header, .favourites__header{
+.contacts__header, 
+.favourites__header {
   font-size: 22px;
   color:cadetblue;
   text-align: center;
 }
-.contacts__unset-favourite, .contacts__set-favourite, .contacts__delete-contact, .contacts__edit-contact{
+.contacts__unset-favourite, 
+.contacts__set-favourite, 
+.contacts__delete-contact, 
+.contacts__edit-contact {
   background-color: transparent;
-  border: none;
+  border: 0;
   outline: none;
 }

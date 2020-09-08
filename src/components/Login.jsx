@@ -38,8 +38,8 @@ export default function Login() {
   const handleLogin = event => {
     event.preventDefault();
 
-    if (email === "" || password === "") {
-      setError("Fields are required");
+    if (email === '' || password === '') {
+      setError('Fields are required');
       return;
     }
     
@@ -88,16 +88,15 @@ export default function Login() {
             variant="contained"
             color="primary"
             className={classes.submit}
-            onClick = {handleLogin}          
-                    
+            onClick = {handleLogin}                  
           >
             Sign In
           </Button>
-        {error && (
-          <Alert severity="error" onClick={() => setError(null)}>
-            {error.message}
-          </Alert>
-        )}
+          {error && (
+            <Alert severity="error" onClick={() => setError(null)}>
+              {error.message}
+            </Alert>
+          )}
         </form>
       </div>
     </Container>

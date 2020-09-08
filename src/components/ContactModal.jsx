@@ -5,8 +5,8 @@ import Button from '@material-ui/core/Button';
 import { connect } from 'react-redux';
 import { showContactModal } from '../redux/modal/modal.actions';
 import { db } from '../firebase/firebaseConfig';
-import MuiAlert from "@material-ui/lab/Alert";
-import CloseIcon from './icons/close'
+import MuiAlert from '@material-ui/lab/Alert';
+import CloseIcon from './icons/close';
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
   
-const ContactModal = ({contactData, showContactModal}) => {
+function ContactModal({contactData, showContactModal}) {
   const classes = useStyles();
   const [name, setName] = useState(contactData?.contact?.name || '');
   const [phone, setPhone] = useState(contactData?.contact?.phone || '');
@@ -34,7 +34,7 @@ const ContactModal = ({contactData, showContactModal}) => {
     event.preventDefault();
 
     if (!email || !phone || !email) {
-      setError("Fields are required");
+      setError('Fields are required');
       return;
     }
     
@@ -52,7 +52,8 @@ const ContactModal = ({contactData, showContactModal}) => {
             
     if (contactData.type === 'edit') {
       db.collection('contacts').doc(contactData.contact.id)
-        .update({ 'name': name, 'email': email, 'phone': phone }).catch((error)=>{console.log(error)})
+        .update({ name, email, phone })
+        .catch((error) => { console.log(error) })
     }
 
     showContactModal(false);
@@ -64,7 +65,12 @@ const ContactModal = ({contactData, showContactModal}) => {
       
   return (
     <div className="contact-modal">
-      <button className="contact-modal__close-modal" onClick={closeModal}><CloseIcon /></button>
+      <button
+        className="contact-modal__close-modal"
+        onClick={closeModal}
+      >
+        <CloseIcon />
+      </button>
       <form className={classes.root} noValidate autoComplete="off">
         <TextField
           variant="outlined"

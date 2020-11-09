@@ -1,9 +1,21 @@
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { auth } from '../firebase/firebaseConfig';
-import { connect } from 'react-redux';
+import { connect, ConnectedProps } from 'react-redux';
+import * as RootReducer from '../redux/root.reducer';
 
-function Navbar({ currentUser }) {
+const mapStateToProps = (state: RootReducer.RootState) => ({
+  currentUser: state.auth.currentUser
+});
+const connector = connect(
+  mapStateToProps,
+  null
+);
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+type Props = PropsFromRedux;
+
+const Navbar: React.FC<Props> = ({ currentUser })=>{
   const history = useHistory();
 
   const handleSignOut = () => {
@@ -33,13 +45,6 @@ function Navbar({ currentUser }) {
       }
     </div>
   );
-};
+}
   
-const mapStateToProps = state => ({
-  currentUser: state.auth.currentUser
-});
-  
-export default connect(
-  mapStateToProps,
-  null
-)(Navbar);
+export default connector(Navbar);

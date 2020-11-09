@@ -2,11 +2,27 @@ import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import { connect } from 'react-redux';
+import { connect, ConnectedProps, useDispatch } from 'react-redux';
 import { showContactModal } from '../redux/modal/modal.actions';
 import { db } from '../firebase/firebaseConfig';
 import MuiAlert from '@material-ui/lab/Alert';
 import CloseIcon from './icons/close';
+import * as RootReducer from '../redux/root.reducer';
+import * as ContactTypes from '../types/contactsReducerTypes';
+
+const mapStateToProps = (state:RootReducer.RootState) => ({
+  contactData: state.contactModal.showModal
+})
+const dispatch = useDispatch();
+
+const mapDispatchToProps = () => ({
+  showContactModal: (data:ContactTypes.ShowModal) => dispatch(showContactModal(data))
+});
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+type Props = PropsFromRedux;
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -23,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
   
-function ContactModal({contactData, showContactModal}) {
+const ContactModal:React.FC<Props> = ({ contactData, showContactModal })=>{
   const classes = useStyles();
   const [name, setName] = useState(contactData?.contact?.name || '');
   const [phone, setPhone] = useState(contactData?.contact?.phone || '');
@@ -110,7 +126,7 @@ function ContactModal({contactData, showContactModal}) {
           Send
         </Button>
         {error && (
-          <Alert severity="error" onClick={() => setError(null)}>
+          <Alert severity="error" onClick={() => setError('')}>
             {error}
           </Alert>
         )}
@@ -118,13 +134,5 @@ function ContactModal({contactData, showContactModal}) {
     </div>
   );
 }
-
-const mapStateToProps = (state) => ({
-  contactData: state.contactModal.showModal
-})
   
-const mapDispatchToProps = dispatch => ({
-  showContactModal: data => dispatch(showContactModal(data))
-});
-  
-export default connect(mapStateToProps, mapDispatchToProps)(ContactModal);
+export default connector(ContactModal);

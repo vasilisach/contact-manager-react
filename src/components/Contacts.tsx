@@ -1,7 +1,7 @@
 import React from 'react';
 import { showContactModal } from '../redux/modal/modal.actions';
 import { db } from '../firebase/firebaseConfig';
-import { connect } from 'react-redux';
+import { connect, useDispatch, ConnectedProps } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import StartFilledIcon from './icons/star-filled'
 import StartBorderedIcon from './icons/start-bordered'
@@ -14,7 +14,24 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
+import * as Paper from '@material-ui/core/Paper';
+import * as RootReducer from '../redux/root.reducer';
+import * as ContactsTypes from '../types/contactsReducerTypes';
+
+const mapStateToProps = (state: RootReducer.RootState) => ({
+  currentUser: state.auth.currentUser,
+  userContacts: state.contacts.userContacts
+})
+const dispatch = useDispatch();
+const mapDispatchToProps = () => ({
+  showContactModal: (data: ContactsTypes.ShowModal) => dispatch(showContactModal(data))
+});
+const connector = connect(mapStateToProps, mapDispatchToProps);
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+type Props = PropsFromRedux & {
+  userContacts: ContactsTypes.Contact[]
+};
 
 const useStyles = makeStyles({
   table: {
@@ -22,10 +39,11 @@ const useStyles = makeStyles({
   },
 });
 
-function Contacts({ currentUser, userContacts, showContactModal }) {
+const Contacts: React.FC<Props> = ({ currentUser, userContacts, showContactModal })=>{
+
   const classes = useStyles();
 
-  const deleteContact = (id) => {
+  const deleteContact = (id:string) => {
     if (id) {
       db.collection('contacts').doc(id).delete()
         .then(function () {
@@ -37,21 +55,23 @@ function Contacts({ currentUser, userContacts, showContactModal }) {
     }
   };
 
-  const editContact = (contact) => {
+  const editContact = (contact: ContactsTypes.Contact) => {
     showContactModal({ type: 'edit', contact });
   }
 
   const addContact = () => {
-    showContactModal({ type: 'add', ownerId: currentUser.uid });
+    if (currentUser) {
+      showContactModal({ type: 'add', ownerId: currentUser.uid }); 
+    }
   };
 
-  const setFavourite = (id) => {
+  const setFavourite = (id: string) => {
     if (id) {
       db.collection('contacts').doc(id).update({'isFavourite': true}) 
     }
   }
 
-  const unsetFavourite = (id) => {
+  const unsetFavourite = (id: string) => {
     if (id) {
       db.collection('contacts').doc(id).update({'isFavourite': false}) 
     }
@@ -126,14 +146,5 @@ function Contacts({ currentUser, userContacts, showContactModal }) {
   )
 }
 
-const mapStateToProps = (state) => ({
-  currentUser: state.auth.currentUser,
-  userContacts: state.contacts.userContacts
-})
-  
-const mapDispatchToProps = dispatch => ({
-  showContactModal: data => dispatch(showContactModal(data))
-});
-  
-export default connect(mapStateToProps, mapDispatchToProps)(Contacts);
+export default connector(Contacts);
   

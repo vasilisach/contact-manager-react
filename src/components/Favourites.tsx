@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { connect, ConnectedProps } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -8,6 +8,13 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import * as RootReducer from '../redux/root.reducer';
+import * as ContactTypes from '../types/contactsReducerTypes';
+
+const mapStateToProps = (state:RootReducer.RootState) => ({
+  favouriteContacts: state.contacts.favouriteContacts
+})
+const connector = connect(mapStateToProps, null);
 
 const useStyles = makeStyles({
   table: {
@@ -15,7 +22,12 @@ const useStyles = makeStyles({
   },
 });
 
-function Favourites({ favouriteContacts }) {
+type PropsFromRedux = ConnectedProps<typeof connector>;
+type Props = PropsFromRedux & {
+  favouriteContacts: ContactTypes.Contact[]
+};
+
+const Favourites:React.FC<Props> = ({ favouriteContacts }) => {
   const classes = useStyles();
     
   return (
@@ -48,10 +60,6 @@ function Favourites({ favouriteContacts }) {
     </div>
   )
 }
-
-const mapStateToProps = (state) => ({
-  favouriteContacts: state.contacts.favouriteContacts
-})
   
-export default connect(mapStateToProps, null)(Favourites);
+export default connector(Favourites);
   

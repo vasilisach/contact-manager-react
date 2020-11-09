@@ -63,6 +63,7 @@
   width:50px;
   height: 50px;
   outline: none;
+  cursor: pointer;
 }
 .contacts__header, 
 .favourites__header {
@@ -77,4 +78,5 @@
   background-color: transparent;
   border: 0;
   outline: none;
+  cursor: pointer;
 }

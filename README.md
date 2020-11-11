@@ -8,7 +8,7 @@ https://drive.google.com/file/d/1bKl-c82PPE2RQN5xF5OaewAxBX-81qMA/view?usp=shari
 2. You need node.js and npm install
 3. Open project with editor (for instance VSC)
 4. In terminal run npm i (to install necessary dependencies)
-5. Run project with "npm start"
+5. Run project with "npm run start"
 
 ## Available Scripts
 

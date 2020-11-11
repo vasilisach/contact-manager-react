@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect, ConnectedProps } from 'react-redux';
+import { connect } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -8,10 +8,10 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import * as RootReducer from '../redux/root.reducer';
-import * as ContactTypes from '../types/contactsReducerTypes';
+import * as CommonTypes from '../types/commonTypes';
+import {Contact} from '../types/contactsReducerTypes';
 
-const mapStateToProps = (state:RootReducer.RootState) => ({
+const mapStateToProps = (state:CommonTypes.RootState) => ({
   favouriteContacts: state.contacts.favouriteContacts
 })
 const connector = connect(mapStateToProps, null);
@@ -22,9 +22,8 @@ const useStyles = makeStyles({
   },
 });
 
-type PropsFromRedux = ConnectedProps<typeof connector>;
-type Props = PropsFromRedux & {
-  favouriteContacts: ContactTypes.Contact[]
+type Props = {
+  favouriteContacts: Contact[]
 };
 
 const Favourites:React.FC<Props> = ({ favouriteContacts }) => {

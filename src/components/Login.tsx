@@ -7,11 +7,6 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { auth } from '../firebase/firebaseConfig';
-import MuiAlert from "@material-ui/lab/Alert";
-
-function Alert(props) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -35,7 +30,7 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const handleLogin = event => {
+  const handleLogin = (event:React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
     if (email === '' || password === '') {
@@ -44,8 +39,14 @@ export default function Login() {
     }
     
     auth.signInWithEmailAndPassword(email, password)
-      .then(user => { history.push('/') })
-      .catch(error => setError(error));
+      .then(user => {
+        console.log(user)
+        history.push('/')
+      })
+      .catch(error => {
+        setError(error.message)
+      }
+      );
   } 
 
   return (
@@ -93,9 +94,9 @@ export default function Login() {
             Sign In
           </Button>
           {error && (
-            <Alert severity="error" onClick={() => setError(null)}>
-              {error.message}
-            </Alert>
+            <div className="error" onClick={() => setError('')}>
+              {error}
+            </div>
           )}
         </form>
       </div>

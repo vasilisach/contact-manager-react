@@ -1,7 +1,7 @@
-import  * as React from 'react';
+import React from 'react';
 import * as RouterDOM from "react-router-dom";
 import './App.css';
-import { connect, ConnectedProps, useDispatch } from 'react-redux';
+import { connect, ConnectedProps } from 'react-redux';
 import Navbar from './components/Navbar';
 import Contacts from './components/Contacts';
 import Favourites from './components/Favourites';
@@ -10,28 +10,27 @@ import ContactModal from './components/ContactModal';
 import { setCurrentUser, clearCurrentUser } from './redux/auth/auth.actions';
 import { setContacts, getFavouriteContacts } from './redux/contacts/contacts.actions';
 import { auth, db } from './firebase/firebaseConfig';
-import * as RootReduser from './redux/root.reducer';
+import * as CommonTypes from './types/commonTypes';
 import * as AuthTypes from './types/authReducerTypes';
 import * as ContactsTypes from './types/contactsReducerTypes';
-import { Socket } from 'dgram';
+import store from './redux/store';
 
-const mapStateToProps = (state: RootReduser.RootState) => ({
+const mapStateToProps = (state: CommonTypes.RootState) => ({
   currentUser: state.auth.currentUser,
-  showModal: state.contactModal.showModal
+  modalState: state.contactModal.modalState
 });
-const dispatch = useDispatch();
 const mapDispatchToProps = () => ({
-  setCurrentUser: (user:AuthTypes.User) => dispatch(setCurrentUser(user)),
-  clearCurrentUser: () => dispatch(clearCurrentUser()),
-  setContacts: (contacts: ContactsTypes.Contact[]) => dispatch(setContacts(contacts)),
-  getFavouriteContacts: (contacts: ContactsTypes.Contact[]) => dispatch(getFavouriteContacts(contacts))
+  setCurrentUser: (user:AuthTypes.User) => store.dispatch(setCurrentUser(user)),
+  clearCurrentUser: () => store.dispatch(clearCurrentUser()),
+  setContacts: (contacts: ContactsTypes.Contact[]) => store.dispatch(setContacts(contacts)),
+  getFavouriteContacts: (contacts: ContactsTypes.Contact[]) => store.dispatch(getFavouriteContacts(contacts))
 });
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type Props = PropsFromRedux;
 
-const App:React.FC<Props> = ({ currentUser, setCurrentUser, clearCurrentUser, showModal, setContacts, getFavouriteContacts })=>{
+function App ({ currentUser, setCurrentUser, clearCurrentUser, modalState, setContacts, getFavouriteContacts }:Props){
   React.useEffect(() => {
     let unsubscribeFromAuth = auth.onAuthStateChanged(user => {
       if (user) {
@@ -57,7 +56,7 @@ const App:React.FC<Props> = ({ currentUser, setCurrentUser, clearCurrentUser, sh
     });
     
     return () => unsubscribeFromAuth();
-  }, [currentUser, setCurrentUser, clearCurrentUser, showModal, setContacts, getFavouriteContacts]);
+  }, [currentUser, setCurrentUser, clearCurrentUser, modalState, setContacts, getFavouriteContacts]);
 
   return (
     <RouterDOM.BrowserRouter>
@@ -68,7 +67,7 @@ const App:React.FC<Props> = ({ currentUser, setCurrentUser, clearCurrentUser, sh
           {currentUser ? <RouterDOM.Route path="/favourites" exact component={Favourites} />: null}
           {!currentUser ? <RouterDOM.Route path="/login" exact component={Login} />: null}
         </RouterDOM.Switch>
-        { showModal ? <ContactModal /> : null }
+        { (currentUser && modalState!=='close') ? <ContactModal /> : null }
       </div>
     </RouterDOM.BrowserRouter>
   );

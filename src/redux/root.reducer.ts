@@ -6,9 +6,7 @@ import modalReducer from './modal/modal.reducer';
 const rootReducer = combineReducers({
     auth: authReducer,
     contacts: contactsReducer,
-    contactModal: modalReducer,
-    favourites: contactsReducer
+    contactModal: modalReducer
 });
 
 export default rootReducer;
-export type RootState = ReturnType<typeof rootReducer>;

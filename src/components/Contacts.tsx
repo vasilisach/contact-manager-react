@@ -1,47 +1,38 @@
-import React from 'react';
-import { showContactModal } from '../redux/modal/modal.actions';
+import * as React from 'react';
+import { setModalState, setModalData } from '../redux/modal/modal.actions';
 import { db } from '../firebase/firebaseConfig';
-import { connect, useDispatch, ConnectedProps } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import { connect, ConnectedProps } from 'react-redux';
 import StartFilledIcon from './icons/star-filled'
 import StartBorderedIcon from './icons/start-bordered'
 import DeleteIcon from './icons/delete'
 import EditIcon from './icons/edit'
 import AddIcon from './icons/add'
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import * as Paper from '@material-ui/core/Paper';
-import * as RootReducer from '../redux/root.reducer';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+} from '@material-ui/core';
+import * as CommonTypes from '../types/commonTypes';
 import * as ContactsTypes from '../types/contactsReducerTypes';
+import store from '../redux/store';
 
-const mapStateToProps = (state: RootReducer.RootState) => ({
+const mapStateToProps = (state: CommonTypes.RootState) => ({
   currentUser: state.auth.currentUser,
   userContacts: state.contacts.userContacts
 })
-const dispatch = useDispatch();
 const mapDispatchToProps = () => ({
-  showContactModal: (data: ContactsTypes.ShowModal) => dispatch(showContactModal(data))
+  setModalState: (data: string) => store.dispatch(setModalState(data)),
+  setModalData: (data: ContactsTypes.Contact | null) => store.dispatch(setModalData(data))
 });
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
-type Props = PropsFromRedux & {
-  userContacts: ContactsTypes.Contact[]
-};
+type Props = PropsFromRedux;
 
-const useStyles = makeStyles({
-  table: {
-    minWidth: 400,
-  },
-});
 
-const Contacts: React.FC<Props> = ({ currentUser, userContacts, showContactModal })=>{
-
-  const classes = useStyles();
+const Contacts: React.FC<Props> = ({ currentUser, userContacts, setModalState, setModalData })=>{
 
   const deleteContact = (id:string) => {
     if (id) {
@@ -56,12 +47,13 @@ const Contacts: React.FC<Props> = ({ currentUser, userContacts, showContactModal
   };
 
   const editContact = (contact: ContactsTypes.Contact) => {
-    showContactModal({ type: 'edit', contact });
+    setModalState('edit');
+    setModalData(contact);
   }
 
   const addContact = () => {
     if (currentUser) {
-      showContactModal({ type: 'add', ownerId: currentUser.uid }); 
+      setModalState('add');
     }
   };
 
@@ -76,7 +68,7 @@ const Contacts: React.FC<Props> = ({ currentUser, userContacts, showContactModal
       db.collection('contacts').doc(id).update({'isFavourite': false}) 
     }
   }
-    
+
   return (
     <div className="contacts">
       <h3 className="contacts__header">Contacts</h3>
@@ -88,8 +80,7 @@ const Contacts: React.FC<Props> = ({ currentUser, userContacts, showContactModal
       </button>
       
       {userContacts.length > 0 ?
-        <TableContainer component={Paper} width="70%">
-          <Table className={classes.table} aria-label="simple table">
+          <Table aria-label="simple table">
             <TableHead>
               <TableRow>
                 <TableCell>Favourite</TableCell>
@@ -138,7 +129,6 @@ const Contacts: React.FC<Props> = ({ currentUser, userContacts, showContactModal
               ))}
             </TableBody>
           </Table>
-        </TableContainer>
         :
         "You haven't contacts yet!"
       }

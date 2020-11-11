@@ -1,5 +1,6 @@
 const modalTypes = {
-    SHOW_CONTACT_MODAL: 'SHOW_CONTACT_MODAL'
+    SET_MODAL_STATE: 'SET_MODAL_STATE',
+    SET_MODAL_DATA: 'SET_MODAL_DATA'
 }
 
 export default modalTypes;

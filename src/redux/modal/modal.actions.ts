@@ -1,9 +1,15 @@
 import modalTypes from './modal.types';
-import * as ContactModalTypes from '../../types/contactsReducerTypes';
+import * as ContactTypes from '../../types/contactsReducerTypes'
 
-export const showContactModal = (actionType: ContactModalTypes.ShowModal)=> {
+export const setModalState = (actionType: string)=> {
   return {
-    type: modalTypes.SHOW_CONTACT_MODAL,
+    type: modalTypes.SET_MODAL_STATE,
     payload: actionType
   };
 };
+export const setModalData = (contact: ContactTypes.Contact | null) => {
+  return {
+    type: modalTypes.SET_MODAL_DATA,
+    payload: contact
+  }
+}

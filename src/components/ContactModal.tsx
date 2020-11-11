@@ -2,31 +2,29 @@ import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import { connect, ConnectedProps, useDispatch } from 'react-redux';
-import { showContactModal } from '../redux/modal/modal.actions';
+import { connect, ConnectedProps } from 'react-redux';
+import { setModalState, setModalData } from '../redux/modal/modal.actions';
 import { db } from '../firebase/firebaseConfig';
-import MuiAlert from '@material-ui/lab/Alert';
 import CloseIcon from './icons/close';
-import * as RootReducer from '../redux/root.reducer';
+import * as CommonTypes from '../types/commonTypes';
 import * as ContactTypes from '../types/contactsReducerTypes';
+import store from '../redux/store';
 
-const mapStateToProps = (state:RootReducer.RootState) => ({
-  contactData: state.contactModal.showModal
+const mapStateToProps = (state: CommonTypes.RootState) => ({
+  currentUser: state.auth.currentUser,
+  modalState: state.contactModal.modalState,
+  modalData:  state.contactModal.modalData
 })
-const dispatch = useDispatch();
 
 const mapDispatchToProps = () => ({
-  showContactModal: (data:ContactTypes.ShowModal) => dispatch(showContactModal(data))
+  setModalState: (data: string) => store.dispatch(setModalState(data)),
+  setModalData: (data: ContactTypes.Contact | null) => store.dispatch(setModalData(data))
 });
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type Props = PropsFromRedux;
-
-function Alert(props) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -39,14 +37,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
   
-const ContactModal:React.FC<Props> = ({ contactData, showContactModal })=>{
+const ContactModal: React.FC<Props> = ({ currentUser, modalState, setModalState, modalData, setModalData }) => {
   const classes = useStyles();
-  const [name, setName] = useState(contactData?.contact?.name || '');
-  const [phone, setPhone] = useState(contactData?.contact?.phone || '');
-  const [email, setEmail] = useState(contactData?.contact?.email || '');
+  const [name, setName] = useState(modalData?.name ||'');
+  const [phone, setPhone] = useState(modalData?.phone || '');
+  const [email, setEmail] = useState(modalData?.email || '');
   const [error, setError] = useState('');
 
-  const handleSubmit = (event) => {
+  const handleSubmit = (event:React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
     if (!email || !phone || !email) {
@@ -54,29 +52,31 @@ const ContactModal:React.FC<Props> = ({ contactData, showContactModal })=>{
       return;
     }
     
-    if (contactData.type === 'add') {
+    if (modalState === 'add') {
       db.collection('contacts').add(
         {
           name,
           phone,
           email,
           isFavourite: false,
-          ownerId: contactData.ownerId
+          ownerId: currentUser?.uid
         }
       )
     } 
             
-    if (contactData.type === 'edit') {
-      db.collection('contacts').doc(contactData.contact.id)
+    if (modalState === 'edit') {
+      db.collection('contacts').doc(modalData?.id)
         .update({ name, email, phone })
         .catch((error) => { console.log(error) })
     }
 
-    showContactModal(false);
+    setModalState('close')
+    setModalData(null);
   }
   
   const closeModal = () => {
-    showContactModal(false);
+    setModalState('close');
+    setModalData(null);
   }
       
   return (
@@ -126,9 +126,9 @@ const ContactModal:React.FC<Props> = ({ contactData, showContactModal })=>{
           Send
         </Button>
         {error && (
-          <Alert severity="error" onClick={() => setError('')}>
+          <div className="error" onClick={() => setError('')}>
             {error}
-          </Alert>
+          </div>
         )}
       </form>
     </div>

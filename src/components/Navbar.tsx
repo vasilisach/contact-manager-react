@@ -2,9 +2,9 @@ import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { auth } from '../firebase/firebaseConfig';
 import { connect, ConnectedProps } from 'react-redux';
-import * as RootReducer from '../redux/root.reducer';
+import * as CommonTypes from '../types/commonTypes';
 
-const mapStateToProps = (state: RootReducer.RootState) => ({
+const mapStateToProps = (state: CommonTypes.RootState) => ({
   currentUser: state.auth.currentUser
 });
 const connector = connect(
@@ -15,7 +15,7 @@ const connector = connect(
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type Props = PropsFromRedux;
 
-const Navbar: React.FC<Props> = ({ currentUser })=>{
+const Navbar: React.FC<Props> = ({ currentUser }) => {
   const history = useHistory();
 
   const handleSignOut = () => {

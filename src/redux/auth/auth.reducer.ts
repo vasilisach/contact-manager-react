@@ -2,7 +2,8 @@ import authTypes from './auth.types';
 import * as allAuthTypes from '../../types/authReducerTypes';
 
 const initialState: allAuthTypes.CurrentUserState = {
-  currentUser: null
+  currentUser: null,
+  inputParams: null
 };
 
 const authReducer = (state = initialState, action: allAuthTypes.UserActions) => {
@@ -17,6 +18,12 @@ const authReducer = (state = initialState, action: allAuthTypes.UserActions) => 
       return {
         ...state,
         currentUser: action.payload
+      };
+    
+    case authTypes.USER_LOGIN:
+      return {
+        ...state,
+        inputParams: action.payload
       };
   
     default:

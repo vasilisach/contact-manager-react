@@ -4,6 +4,7 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { connect, ConnectedProps } from 'react-redux';
 import { setModalState, setModalData } from '../redux/modal/modal.actions';
+import { updateContactsState } from '../redux/contacts/contacts.actions';
 import { db } from '../firebase/firebaseConfig';
 import CloseIcon from './icons/close';
 import * as CommonTypes from '../types/commonTypes';
@@ -18,7 +19,8 @@ const mapStateToProps = (state: CommonTypes.RootState) => ({
 
 const mapDispatchToProps = () => ({
   setModalState: (data: string) => store.dispatch(setModalState(data)),
-  setModalData: (data: ContactTypes.Contact | null) => store.dispatch(setModalData(data))
+  setModalData: (data: ContactTypes.Contact | null) => store.dispatch(setModalData(data)),
+  updateContacts: ()=>store.dispatch(updateContactsState())
 });
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
@@ -37,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
   
-const ContactModal: React.FC<Props> = ({ currentUser, modalState, setModalState, modalData, setModalData }) => {
+const ContactModal: React.FC<Props> = ({ currentUser, modalState, setModalState, modalData, setModalData, updateContacts }) => {
   const classes = useStyles();
   const [name, setName] = useState(modalData?.name ||'');
   const [phone, setPhone] = useState(modalData?.phone || '');
@@ -62,11 +64,14 @@ const ContactModal: React.FC<Props> = ({ currentUser, modalState, setModalState,
           ownerId: currentUser?.uid
         }
       )
+        .then(value => { updateContacts() })
+        .catch((error) => { console.log(error) })
     } 
             
     if (modalState === 'edit') {
       db.collection('contacts').doc(modalData?.id)
         .update({ name, email, phone })
+        .then(value=>{updateContacts()})
         .catch((error) => { console.log(error) })
     }
 

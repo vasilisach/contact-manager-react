@@ -14,3 +14,10 @@ export const getFavouriteContacts = (contacts:contactsReducerTypes.Contact[]) =>
     payload: contacts
   };
 };
+
+export const updateContactsState = () => {
+  return {
+    type: contactsTypes.UPDATE_CONTACTS,
+    payload: 'update'
+  }
+}

@@ -17,7 +17,6 @@ type Props = PropsFromRedux;
 
 const Navbar: React.FC<Props> = ({ currentUser }) => {
   const history = useHistory();
-
   const handleSignOut = () => {
     auth.signOut();
     history.push('/login');

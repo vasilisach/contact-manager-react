@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
@@ -7,6 +6,15 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { auth } from '../firebase/firebaseConfig';
+import { userLoginAction } from '../redux/auth/auth.actions';
+import * as CommonTypes from '../types/commonTypes';
+import store from '../redux/store';
+import * as AuthTypes from '../types/authReducerTypes';
+import { connect, ConnectedProps } from 'react-redux';
+
+export async function userLogin(inputLogin: {email: string, password: string}) {
+  return await auth.signInWithEmailAndPassword(inputLogin.email, inputLogin.password);
+}
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -24,30 +32,31 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Login() {
-  const history = useHistory();
+const mapStateToProps = (state: CommonTypes.RootState) => ({
+  currentUser: state.auth.currentUser
+})
+const mapDispatchToProps = () => ({
+  setUserLogin: (data: AuthTypes.LoginInput) => store.dispatch(userLoginAction(data))
+});
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+type Props = PropsFromRedux;
+
+const Login: React.FC<Props> = ({ setUserLogin }) => {
   const classes = useStyles();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const handleLogin = (event:React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-
     if (email === '' || password === '') {
       setError('Fields are required');
       return;
     }
-    
-    auth.signInWithEmailAndPassword(email, password)
-      .then(user => {
-        console.log(user)
-        history.push('/')
-      })
-      .catch(error => {
-        setError(error.message)
-      }
-      );
-  } 
+    setUserLogin({ email, password });
+  }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -103,3 +112,5 @@ export default function Login() {
     </Container>
   );
 }
+
+export default connector(Login);

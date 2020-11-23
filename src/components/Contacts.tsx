@@ -2,6 +2,7 @@ import * as React from 'react';
 import { setModalState, setModalData } from '../redux/modal/modal.actions';
 import { db } from '../firebase/firebaseConfig';
 import { connect, ConnectedProps } from 'react-redux';
+import { updateContactsState } from '../redux/contacts/contacts.actions';
 import StartFilledIcon from './icons/star-filled'
 import StartBorderedIcon from './icons/start-bordered'
 import DeleteIcon from './icons/delete'
@@ -24,7 +25,8 @@ const mapStateToProps = (state: CommonTypes.RootState) => ({
 })
 const mapDispatchToProps = () => ({
   setModalState: (data: string) => store.dispatch(setModalState(data)),
-  setModalData: (data: ContactsTypes.Contact | null) => store.dispatch(setModalData(data))
+  setModalData: (data: ContactsTypes.Contact | null) => store.dispatch(setModalData(data)),
+  updateContacts: ()=>store.dispatch(updateContactsState())
 });
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
@@ -32,7 +34,7 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 type Props = PropsFromRedux;
 
 
-const Contacts: React.FC<Props> = ({ currentUser, userContacts, setModalState, setModalData })=>{
+const Contacts: React.FC<Props> = ({ currentUser, userContacts, setModalState, setModalData, updateContacts })=>{
 
   const deleteContact = (id:string) => {
     if (id) {
@@ -59,13 +61,15 @@ const Contacts: React.FC<Props> = ({ currentUser, userContacts, setModalState, s
 
   const setFavourite = (id: string) => {
     if (id) {
-      db.collection('contacts').doc(id).update({'isFavourite': true}) 
+      db.collection('contacts').doc(id).update({ 'isFavourite': true })
+      .then(value=>{updateContacts()})
     }
   }
 
   const unsetFavourite = (id: string) => {
     if (id) {
-      db.collection('contacts').doc(id).update({'isFavourite': false}) 
+      db.collection('contacts').doc(id).update({ 'isFavourite': false })
+      .then(value=>{updateContacts()})
     }
   }
 

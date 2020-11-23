@@ -9,10 +9,11 @@ import Login from './components/Login';
 import ContactModal from './components/ContactModal';
 import { setCurrentUser, clearCurrentUser } from './redux/auth/auth.actions';
 import { setContacts, getFavouriteContacts } from './redux/contacts/contacts.actions';
-import { auth, db } from './firebase/firebaseConfig';
+import { auth } from './firebase/firebaseConfig';
 import * as CommonTypes from './types/commonTypes';
 import * as AuthTypes from './types/authReducerTypes';
 import * as ContactsTypes from './types/contactsReducerTypes';
+import { setUserContacts } from './firebase/firebaseAPI';
 import store from './redux/store';
 
 const mapStateToProps = (state: CommonTypes.RootState) => ({
@@ -30,34 +31,20 @@ const connector = connect(mapStateToProps, mapDispatchToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 type Props = PropsFromRedux;
 
-function App ({ currentUser, setCurrentUser, clearCurrentUser, modalState, setContacts, getFavouriteContacts }:Props){
-  React.useEffect(() => {
+function App({ currentUser, modalState, setCurrentUser, clearCurrentUser }: Props) {
+  React.useEffect(() => { 
     let unsubscribeFromAuth = auth.onAuthStateChanged(user => {
+      console.log(user)
       if (user) {
         setCurrentUser(user);
-        db.collection('contacts').where("ownerId","==",user.uid)
-          .onSnapshot(result => {
-            let userContacts: ContactsTypes.Contact[] = result.docs.map(doc => ({
-              id: doc.id,
-              email: doc.data().email,
-              isFavourite: doc.data().isFavourite,
-              name: doc.data().name,
-              ownerId: doc.data().ownerId,
-              phone: doc.data().phone
-            }));
-            setContacts(userContacts);
-            let favouriteContacts = userContacts.filter(contact => contact.isFavourite)
-            getFavouriteContacts(favouriteContacts)
-          })
+        setUserContacts(user.uid);
       } else {
         clearCurrentUser();
         setContacts([]);
       }
-    });
-    
+    })
     return () => unsubscribeFromAuth();
-  }, [currentUser, setCurrentUser, clearCurrentUser, modalState, setContacts, getFavouriteContacts]);
-
+  },[currentUser, clearCurrentUser, setCurrentUser])
   return (
     <RouterDOM.BrowserRouter>
       <div className="container">
@@ -65,7 +52,7 @@ function App ({ currentUser, setCurrentUser, clearCurrentUser, modalState, setCo
         <RouterDOM.Switch>
           {currentUser ? <RouterDOM.Route path="/" exact component={Contacts} /> : null}
           {currentUser ? <RouterDOM.Route path="/favourites" exact component={Favourites} />: null}
-          {!currentUser ? <RouterDOM.Route path="/login" exact component={Login} />: null}
+          {!currentUser ? <RouterDOM.Route path="/login" exact component={Login} />: <RouterDOM.Redirect to="/" />}
         </RouterDOM.Switch>
         { (currentUser && modalState!=='close') ? <ContactModal /> : null }
       </div>

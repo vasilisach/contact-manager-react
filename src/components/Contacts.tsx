@@ -5,16 +5,11 @@ import { connect, ConnectedProps } from 'react-redux';
 import { updateContactsState } from '../redux/contacts/contacts.actions';
 import StartFilledIcon from './icons/star-filled'
 import StartBorderedIcon from './icons/start-bordered'
-import DeleteIcon from './icons/delete'
-import EditIcon from './icons/edit'
-import AddIcon from './icons/add'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-} from '@material-ui/core';
+import DeleteIcon from './icons/delete';
+import EditIcon from './icons/edit';
+import AddIcon from './icons/add';
+import EmailIcon from './icons/email';
+import PhoneIcon from './icons/phone';
 import * as CommonTypes from '../types/commonTypes';
 import * as ContactsTypes from '../types/contactsReducerTypes';
 import store from '../redux/store';
@@ -74,65 +69,61 @@ const Contacts: React.FC<Props> = ({ currentUser, userContacts, setModalState, s
   }
 
   return (
-    <div className="contacts">
-      <h3 className="contacts__header">Contacts</h3>
+    <div className="contacts flex flex-wrap justify-evenly m-3">
       <button
-        className="contacts__add-contact"
+        className="contacts__add-contact absolute bg-gray-500 rounded-full right-2 p-1"
         onClick={() => addContact()}
       >
         <AddIcon />
       </button>
-      
       {userContacts.length > 0 ?
-          <Table aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell>Favourite</TableCell>
-                <TableCell align="right">Name</TableCell>
-                <TableCell align="right">Phone</TableCell>
-                <TableCell align="right">Email</TableCell>
-                <TableCell align="right">Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {userContacts.map(currentcontact => (
-                <TableRow key={currentcontact.id}>
-                  <TableCell>
-                    {currentcontact.isFavourite ?
-                      <button
-                        className="contacts__unset-favourite"
-                        onClick={() => unsetFavourite(currentcontact.id)}>
-                        <StartFilledIcon />
-                      </button>
-                      :
-                      <button
-                        className="contacts__set-favourite"
-                        onClick={() => setFavourite(currentcontact.id)}>
-                        <StartBorderedIcon />
-                      </button>
-                    }
-                  </TableCell>
-                  <TableCell component="th" scope="row" align="right">{currentcontact.name}</TableCell>
-                  <TableCell align="right">{currentcontact.phone}</TableCell>
-                  <TableCell align="right">{currentcontact.email}</TableCell>
-                  <TableCell align="right">
-                    <button
-                      className="contacts__delete-contact"
-                      onClick={() => deleteContact(currentcontact.id)}
-                    >
-                      <DeleteIcon />
-                    </button>
-                    <button
-                      className="contacts__edit-contact"
-                      onClick={() => editContact(currentcontact)}
-                    >
-                      <EditIcon />
-                    </button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+        
+          userContacts.map(currentcontact => (
+            <div className="card shadow-lg relative w-full md:w-1/2 lg:w-1/4 bg-gray-100 rounded-xl" key={currentcontact.id}>
+              <div className="p-6">
+                <div className="relative">
+                  <img src="new-user.png" className="rounded-full m-auto w-1/3" alt="Contact"></img>
+                  {currentcontact.isFavourite ?
+                  <button
+                    className="contacts__unset-favourite absolute right-0 top-0"
+                    onClick={() => unsetFavourite(currentcontact.id)}>
+                    <StartFilledIcon />
+                  </button>
+                  :
+                  <button
+                    className="contacts__set-favourite absolute right-0 top-0"
+                    onClick={() => setFavourite(currentcontact.id)}>
+                    <StartBorderedIcon />
+                  </button>
+                }
+                </div>
+                
+                <div className="text-lg font-bold text-blue-300 text-center p-2">{currentcontact.name}</div>
+                <div className="flex items-center py-1">
+                  <PhoneIcon />
+                  <span className="font-medium text-gray-600 pl-4">{currentcontact.phone}</span>
+                </div>
+                <div className="flex items-center py-1">
+                  <EmailIcon />
+                  <span className="font-medium text-gray-600 pl-4">{currentcontact.email}</span>
+                </div>
+              </div>
+              <div className="control flex justify-around border-solid border-3/2 border-gray-500 w-full bg-white p-2">
+                <button
+                  className="contacts__delete-contact"
+                  onClick={() => deleteContact(currentcontact.id)}
+                >
+                  <DeleteIcon />
+                </button>
+                <button
+                  className="contacts__edit-contact"
+                  onClick={() => editContact(currentcontact)}
+                >
+                  <EditIcon />
+                </button>
+              </div>
+            </div>
+          ))
         :
         "You haven't contacts yet!"
       }

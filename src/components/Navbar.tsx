@@ -23,23 +23,23 @@ const Navbar: React.FC<Props> = ({ currentUser }) => {
   }
 
   return (
-    <div className="nav-bar">
+    <div className="nav-bar bg-gray-600 p-6 text-white text-lg font-medium">
       {currentUser ? (
-        <div className="nav-bar__nav-content">
+        <div className="nav-bar__nav-content flex justify-between">
           <div className="nav-bar__nav-left">
-            <Link to='/' className="nav-bar__nav-link">Contacts</Link>
-            <Link to='/favourites' className="nav-bar__nav-link">Favourites</Link>
+            <Link to='/' className="nav-bar__nav-link px-3 cursor-pointer hover:underline">Contacts</Link>
+            <Link to='/favourites' className="nav-bar__nav-link px-3 cursor-pointer hover:underline">Favourites</Link>
           </div>
           <div
             color="inherit"
-            className="nav-bar__signout-btn"
+            className="nav-bar__signout-btn cursor-pointer"
             onClick={handleSignOut}
           >
             Sign out
           </div>
         </div>
       ) : (
-        <Link to='/login' className="nav-bar__login-btn">Login</Link>
+        <Link to='/login' className="nav-bar__login-btn flex justify-end">Login</Link>
       )
       }
     </div>

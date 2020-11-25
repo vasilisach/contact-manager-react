@@ -1,6 +1,5 @@
 import React from 'react';
 import * as RouterDOM from "react-router-dom";
-import './App.css';
 import { connect, ConnectedProps } from 'react-redux';
 import Navbar from './components/Navbar';
 import Contacts from './components/Contacts';
@@ -34,7 +33,6 @@ type Props = PropsFromRedux;
 function App({ currentUser, modalState, setCurrentUser, clearCurrentUser }: Props) {
   React.useEffect(() => { 
     let unsubscribeFromAuth = auth.onAuthStateChanged(user => {
-      console.log(user)
       if (user) {
         setCurrentUser(user);
         setUserContacts(user.uid);
@@ -47,7 +45,7 @@ function App({ currentUser, modalState, setCurrentUser, clearCurrentUser }: Prop
   },[currentUser, clearCurrentUser, setCurrentUser])
   return (
     <RouterDOM.BrowserRouter>
-      <div className="container">
+      <div className="">
         <Navbar />
         <RouterDOM.Switch>
           {currentUser ? <RouterDOM.Route path="/" exact component={Contacts} /> : null}
